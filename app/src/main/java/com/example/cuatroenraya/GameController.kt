@@ -1,9 +1,10 @@
 package com.example.cuatroenraya
-
-import android.app.GameState
 import androidx.compose.ui.res.booleanResource
+import com.example.cuatroenraya.GameState
 
 class GameController {
+
+
     private lateinit var board: Array<Array<Char>>
 
     // here it's created the new board size 6 rows 7 colums
@@ -13,12 +14,7 @@ class GameController {
         return board
     }
 
-    enum class GameState {
-        PLAYER1_WIN,
-        PLAYER2_WIN,
-        DRAW,
-        NOT_FINISHED
-    }
+
 
 
     fun checkGameState(board: Array<Array<Char>>): GameState {

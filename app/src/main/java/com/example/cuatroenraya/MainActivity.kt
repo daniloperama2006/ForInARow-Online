@@ -18,14 +18,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cuatroenraya.ui.theme.CuatroEnRayaTheme
-
+import com.example.cuatroenraya.GameController
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var board: Array<Array<Char>>
-    private val GameController = GameController()
     private var gameOver = false
     private var turnPlayer1 = true
+    private val GameController = GameController()
+
 
     @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +59,23 @@ class MainActivity : ComponentActivity() {
 
                             setCard(targetCell, rowIndex, j)
 
-                            turnPlayer1 = !turnPlayer1
+                            // Verificar estado del juego después de cada movimiento
+                            val gameState = GameController.checkGameState(board)
+
+                            if (gameState == GameState.PLAYER1_WIN) {
+                                gameOver = true
+                                showDialog("Player 1 wins")
+                            } else if (gameState == GameState.PLAYER2_WIN) {
+                                gameOver = true
+                                showDialog("Player 2 wins")
+                            } else if (gameState == GameState.DRAW) {
+                                gameOver = true
+                                showDialog("Draw")
+                            } else {
+                                turnPlayer1 = !turnPlayer1
+                            }
+
+
                             break
                         }
                     }
