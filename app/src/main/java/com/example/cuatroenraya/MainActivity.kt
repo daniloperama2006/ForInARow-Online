@@ -64,10 +64,10 @@ class MainActivity : ComponentActivity() {
 
                             if (gameState == GameState.PLAYER1_WIN) {
                                 gameOver = true
-                                showDialog("Player 1 wins")
+                                showDialog("Jugador 1 wins")
                             } else if (gameState == GameState.PLAYER2_WIN) {
                                 gameOver = true
-                                showDialog("Player 2 wins")
+                                showDialog("Jugador 2 wins")
                             } else if (gameState == GameState.DRAW) {
                                 gameOver = true
                                 showDialog("Draw")
@@ -109,11 +109,29 @@ class MainActivity : ComponentActivity() {
     private fun showDialog(message: String){
         AlertDialog.Builder(this)
             .setTitle(message)
-            .setPositiveButton("Play Again", {dialog, which -> startGame()})
+            .setPositiveButton("Play Again", {dialog, which ->
+                startGame()
+                restartBoard()})
             .setNegativeButton("Cancel", {dialog, which -> dialog.dismiss()})
             .show()
     }
 
+    private fun restartBoard() {
+        val layoutBoard = findViewById<LinearLayout>(R.id.boardLayout)
+
+        for (i in 0 until layoutBoard.childCount) {
+            val row = layoutBoard.getChildAt(i) as LinearLayout
+            for (j in 0 until row.childCount) {
+
+                board[i][j] = '-'
+
+                val imageView = row.getChildAt(j) as ImageView
+                imageView.setImageDrawable(getDrawable(R.drawable.blue))
+                imageView.isEnabled = true
+            }
+        }
+
+    }
 
 }
 
