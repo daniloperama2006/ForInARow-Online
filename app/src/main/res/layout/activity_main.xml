@@ -20,7 +20,7 @@
         android:textStyle="bold"
         android:gravity="center"/>
 
-    <!-- Sección para seleccionar el modo de juego -->
+    <!-- Section to chose game-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,16 +32,16 @@
             android:id="@+id/playAgainstAI"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Jugar contra la Máquina" />
+            android:text="Player VS Machine" />
 
         <Button
             android:id="@+id/playAgainstPlayer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Jugar contra Jugador 2"/>
+            android:text="Player VS Player"/>
     </LinearLayout>
 
-    <!-- Tablero de juego (6 filas y 7 columnas) -->
+    <!-- Board of the game -->
     <LinearLayout
         android:id="@+id/boardLayout"
         android:layout_width="match_parent"
@@ -49,7 +49,7 @@
         android:orientation="vertical"
         android:gravity="center">
 
-        <!-- Fila 1 -->
+        <!-- Row 1 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
                 android:adjustViewBounds="true"/>
         </LinearLayout>
 
-        <!-- Fila 2 -->
+        <!-- Row 2 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -147,7 +147,7 @@
                 android:adjustViewBounds="true"/>
         </LinearLayout>
 
-        <!-- Fila 3 -->
+        <!-- Row 3 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -196,7 +196,7 @@
                 android:adjustViewBounds="true"/>
         </LinearLayout>
 
-        <!-- Fila 4 -->
+        <!-- Row 4 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -245,7 +245,7 @@
                 android:adjustViewBounds="true"/>
         </LinearLayout>
 
-        <!-- Fila 5 -->
+        <!-- Row 5 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -294,7 +294,7 @@
                 android:adjustViewBounds="true"/>
         </LinearLayout>
 
-        <!-- Fila 6 -->
+        <!-- Row 6 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -345,12 +345,12 @@
 
     </LinearLayout>
 
-    <!-- Botón para reiniciar el juego -->
+    <!-- Button of restar game -->
     <Button
         android:id="@+id/restartGame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Reiniciar"
+        android:text="Restart"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="30dp"/>
 </LinearLayout>
