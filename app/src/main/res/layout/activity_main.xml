@@ -6,19 +6,42 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity"
-    android:background="#020457"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="8dp"
+    android:background="#13025d">
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="10dp"
         android:text="4 IN A ROW"
         android:textColor="#FFFFFF"
-        android:textSize="45sp"
+        android:textSize="50sp"
         android:textStyle="bold"
-        android:layout_marginBottom="25dp"/>
+        android:gravity="center"/>
 
+    <!-- Sección para seleccionar el modo de juego -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="5dp">
+
+        <Button
+            android:id="@+id/playAgainstAI"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Jugar contra la Máquina" />
+
+        <Button
+            android:id="@+id/playAgainstPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Jugar contra Jugador 2"/>
+    </LinearLayout>
+
+    <!-- Tablero de juego (6 filas y 7 columnas) -->
     <LinearLayout
         android:id="@+id/boardLayout"
         android:layout_width="match_parent"
@@ -26,345 +49,308 @@
         android:orientation="vertical"
         android:gravity="center">
 
-
+        <!-- Fila 1 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
         </LinearLayout>
 
+        <!-- Fila 2 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
         </LinearLayout>
 
+        <!-- Fila 3 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
         </LinearLayout>
 
+        <!-- Fila 4 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
         </LinearLayout>
 
+        <!-- Fila 5 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
         </LinearLayout>
 
+        <!-- Fila 6 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/blue"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"/>
-
         </LinearLayout>
-
-
 
     </LinearLayout>
 
+    <!-- Botón para reiniciar el juego -->
+    <Button
+        android:id="@+id/restartGame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reiniciar"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="30dp"/>
 </LinearLayout>
