@@ -2,11 +2,11 @@
 package com.example.cuatroenraya
 
 /**
- * Enumeración de los posibles estados de la partida.
+ * Enumeration of the possible states of the game.
  */
 enum class GameState {
-    PLAYER1_WIN,    // Jugador 1 (O) conecta cuatro
-    PLAYER2_WIN,    // Jugador 2 o CPU (X) conecta cuatro
-    DRAW,           // Empate: tablero lleno sin ganador
-    NOT_FINISHED    // Partida en curso
+    PLAYER1_WIN,    // Player 1 (O) connects four
+    PLAYER2_WIN,    // Player 2 or CPU (X) connects four
+    DRAW,           // Draw: board full with no winner
+    NOT_FINISHED    // Game in progress
 }
