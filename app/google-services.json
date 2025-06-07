@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "231856037935",
+    "firebase_url": "https://forinarow-online-default-rtdb.firebaseio.com",
+    "project_id": "forinarow-online",
+    "storage_bucket": "forinarow-online.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231856037935:android:04800952cbeb35c39626da",
+        "android_client_info": {
+          "package_name": "com.example.cuatroenrayaOnline"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBz4CsSA3Dl_HBbkU-uiddLi7JQkOmE8pA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,5 @@
 // GameController.kt
-package com.example.cuatroenraya
+package com.example.cuatroenrayaOnline.game
 
 /**
  * GameController contains the pure logic of the game:
@@ -19,9 +19,9 @@ class GameController {
      * - If there are no empty spaces left, returns a draw.
      * - Otherwise, returns not finished.
      * @param board The current state of the game board as a 2D array of characters.
-     * @return [GameState] indicating the current state of the game.
+     * @return [GameStatus] indicating the current state of the game.
      */
-    fun checkGameState(board: Array<Array<Char>>): GameState {
+    fun checkGameState(board: Array<Array<Char>>): GameStatus {
         val rows = board.size
         val cols = board[0].size
 
@@ -36,7 +36,7 @@ class GameController {
         }
 
         // Draw: no empty cells left on the board
-        if (board.all { row -> row.none { it == '-' } }) return GameState.DRAW
+        if (board.all { row -> row.none { it == '-' } }) return GameStatus.DRAW
 
         // Iterate through each non-empty cell and check for possible 4 in a line
         for (i in 0 until rows) {
@@ -50,12 +50,12 @@ class GameController {
                     checkDirection(i, j, 1, 1, cell) ||  // Diagonal up-right
                     checkDirection(i, j, 1, -1, cell)    // Diagonal up-left
                 ) {
-                    return if (cell == 'O') GameState.PLAYER1_WIN else GameState.PLAYER2_WIN
+                    return if (cell == 'O') GameStatus.PLAYER1_WIN else GameStatus.PLAYER2_WIN
                 }
             }
         }
 
         // If no winner and not a draw, the game is not finished
-        return GameState.NOT_FINISHED
+        return GameStatus.NOT_FINISHED
     }
 }

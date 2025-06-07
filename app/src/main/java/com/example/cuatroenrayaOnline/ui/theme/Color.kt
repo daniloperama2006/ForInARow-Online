@@ -1,4 +1,4 @@
-package com.example.cuatroenraya.ui.theme
+package com.example.cuatroenrayaOnline.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

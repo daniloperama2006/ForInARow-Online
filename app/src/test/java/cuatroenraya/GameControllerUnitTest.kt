@@ -1,7 +1,7 @@
 package cuatroenraya // Specifies the package this code belongs to.
 
-import com.example.cuatroenraya.GameController // Imports the GameController class from another package.
-import com.example.cuatroenraya.GameState // Imports the GameState enum from another package.
+import com.example.cuatroenrayaOnline.game.GameController // Imports the GameController class from another package.
+import com.example.cuatroenrayaOnline.game.GameStatus // Imports the GameState enum from another package.
 import org.junit.Assert.assertEquals // Imports the assertEquals function from JUnit for making assertions in tests.
 import org.junit.Test // Imports the Test annotation from JUnit to mark methods as test cases.
 
@@ -37,7 +37,7 @@ class GameControllerUnitTest {
     @Test
     fun `checkGameState should return NOT_FINISHED for an empty board`() {
         val board = gameController.newBoard() // Creates a new empty game board.
-        assertEquals(GameState.NOT_FINISHED, gameController.checkGameState(board)) // Asserts that checking the game state of the empty board returns NOT_FINISHED.
+        assertEquals(GameStatus.NOT_FINISHED, gameController.checkGameState(board)) // Asserts that checking the game state of the empty board returns NOT_FINISHED.
     }
 
     /**
@@ -54,7 +54,7 @@ class GameControllerUnitTest {
             arrayOf('-', '-', '-', '-', '-', '-', '-'),
             arrayOf('O', 'O', 'O', 'O', '-', '-', '-') // Four 'O's in a horizontal line.
         )
-        assertEquals(GameState.PLAYER1_WIN, gameController.checkGameState(board)) // Asserts that checking the game state returns PLAYER1_WIN.
+        assertEquals(GameStatus.PLAYER1_WIN, gameController.checkGameState(board)) // Asserts that checking the game state returns PLAYER1_WIN.
     }
 
     /**
@@ -71,7 +71,7 @@ class GameControllerUnitTest {
             arrayOf('-', '-', '-', '-', '-', '-', '-'),
             arrayOf('-', '-', '-', '-', '-', '-', '-')
         )
-        assertEquals(GameState.PLAYER2_WIN, gameController.checkGameState(board)) // Asserts that checking the game state returns PLAYER2_WIN.
+        assertEquals(GameStatus.PLAYER2_WIN, gameController.checkGameState(board)) // Asserts that checking the game state returns PLAYER2_WIN.
     }
 
     /**
@@ -88,7 +88,7 @@ class GameControllerUnitTest {
             arrayOf('-', '-', '-', '-', '-', '-', '-'),
             arrayOf('-', '-', '-', '-', '-', '-', '-')
         )
-        assertEquals(GameState.PLAYER1_WIN, gameController.checkGameState(board)) // Asserts that checking the game state returns PLAYER1_WIN.
+        assertEquals(GameStatus.PLAYER1_WIN, gameController.checkGameState(board)) // Asserts that checking the game state returns PLAYER1_WIN.
     }
 
     /**
@@ -105,7 +105,7 @@ class GameControllerUnitTest {
             arrayOf('-', '-', '-', '-', '-', '-', '-'),
             arrayOf('-', '-', '-', '-', '-', '-', '-')
         )
-        assertEquals(GameState.PLAYER2_WIN, gameController.checkGameState(board)) // Asserts that checking the game state returns PLAYER2_WIN.
+        assertEquals(GameStatus.PLAYER2_WIN, gameController.checkGameState(board)) // Asserts that checking the game state returns PLAYER2_WIN.
     }
 
     /**
@@ -122,7 +122,7 @@ class GameControllerUnitTest {
             arrayOf('O', 'X', 'O', 'X', 'O', 'X', 'O'),
             arrayOf('X', 'O', 'X', 'O', 'X', 'O', 'X')
         )
-        assertEquals(GameState.DRAW, gameController.checkGameState(board)) // Asserts that checking the game state of the full board returns DRAW.
+        assertEquals(GameStatus.DRAW, gameController.checkGameState(board)) // Asserts that checking the game state of the full board returns DRAW.
     }
 
     /**
@@ -140,6 +140,6 @@ class GameControllerUnitTest {
             arrayOf('-', '-', 'X', '-', '-', '-', '-'),
             arrayOf('O', '-', '-', '-', '-', '-', '-')
         )
-        assertEquals(GameState.NOT_FINISHED, gameController.checkGameState(board)) // Asserts that checking the game state of the partially filled board returns NOT_FINISHED.
+        assertEquals(GameStatus.NOT_FINISHED, gameController.checkGameState(board)) // Asserts that checking the game state of the partially filled board returns NOT_FINISHED.
     }
 }
