@@ -26,20 +26,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:paddingTop="5dp">
-
-        <Button
-            android:id="@+id/playAgainstAI"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Player VS Machine" />
-
-        <Button
-            android:id="@+id/playAgainstPlayer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Player VS Player"/>
-    </LinearLayout>
+        android:paddingTop="5dp"/>
 
     <!-- Board of the game -->
     <LinearLayout
@@ -350,7 +337,7 @@
         android:id="@+id/restartGame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Restart"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="30dp"/>
+        android:layout_marginBottom="30dp"
+        android:text="Menu" />
 </LinearLayout>

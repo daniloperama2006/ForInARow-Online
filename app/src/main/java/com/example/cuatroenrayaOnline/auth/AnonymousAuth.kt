@@ -2,18 +2,16 @@ package com.example.cuatroenrayaOnline.auth
 
 import com.google.firebase.auth.FirebaseAuth
 
-object AnonymousAuth {
-    fun signInAnonymously(onSuccess: (String) -> Unit, onError: (Exception) -> Unit) {
-        FirebaseAuth.getInstance().signInAnonymously()
-            .addOnSuccessListener { result ->
-                onSuccess(result.user?.uid ?: "")
-            }
-            .addOnFailureListener { exception ->
-                onError(exception)
+class AnonymousAuth(private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()) {
+
+    fun signInAnonymously(onComplete: (Boolean) -> Unit) {
+        firebaseAuth.signInAnonymously()
+            .addOnCompleteListener { task ->
+                onComplete(task.isSuccessful)
             }
     }
 
     fun getCurrentUserUid(): String? {
-        return FirebaseAuth.getInstance().currentUser?.uid
+        return firebaseAuth.currentUser?.uid
     }
 }

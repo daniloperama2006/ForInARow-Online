@@ -1,26 +1,10 @@
 // GameController.kt
 package com.example.cuatroenrayaOnline.game
 
-/**
- * GameController contains the pure logic of the game:
- * - creation of an empty board
- * - state verification: victory in a line of 4 or a draw
- */
 class GameController {
-    /**
-     * Generates a new 6 rows x 7 columns board filled with '-' (empty).
-     * @return A 2D array of characters representing the empty game board.
-     */
+
     fun newBoard(): Array<Array<Char>> = Array(6) { Array(7) { '-' } }
 
-    /**
-     * Checks the state of the board:
-     * - If there are 4 identical symbols ('O' or 'X') in a horizontal, vertical, or diagonal line, returns victory.
-     * - If there are no empty spaces left, returns a draw.
-     * - Otherwise, returns not finished.
-     * @param board The current state of the game board as a 2D array of characters.
-     * @return [GameStatus] indicating the current state of the game.
-     */
     fun checkGameState(board: Array<Array<Char>>): GameStatus {
         val rows = board.size
         val cols = board[0].size

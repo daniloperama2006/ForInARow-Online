@@ -1,5 +1,6 @@
 package com.example.cuatroenrayaOnline
 
+import android.R.id.message
 import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Handler
@@ -8,7 +9,10 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
+import com.example.cuatroenraya.R
 import com.example.cuatroenrayaOnline.game.*
+import com.google.firebase.auth.FirebaseAuth
+import java.util.UUID
 
 class MainActivity : ComponentActivity() {
     private lateinit var board: Array<Array<Char>>
@@ -18,9 +22,10 @@ class MainActivity : ComponentActivity() {
     private var isVsCPU = true
     private var isOnlineGame = false
     private var turnPlayer1 = true
+    private var isMyTurn = false
 
     private var onlineManager: GameOnlineManager? = null
-    private val sessionId = "test-session-001"
+    private var waitingDialog: AlertDialog? = null // NUEVO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,26 +61,45 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupOnlineGame() {
-        onlineManager = GameOnlineManager(sessionId)
-        onlineManager?.joinGame()
+        board = Array(6) { Array(7) { '-' } }
+        gameOver = false
+
+        val auth = FirebaseAuth.getInstance()
+        val userId = auth.currentUser?.uid ?: UUID.randomUUID().toString()
+        onlineManager = GameOnlineManager(userId)
+
+        // Mostrar diálogo de espera
+        waitingDialog = AlertDialog.Builder(this)
+            .setTitle("Waiting for a player...")
+            .setMessage("Please wait while anybody joins the game.")
+            .setCancelable(false)
+            .create()
+        waitingDialog?.show()
+
         onlineManager?.connectToSession(
-            onBoardUpdate = { newBoard, isMyTurn ->
-                runOnUiThread {
-                    board = newBoard
-                    updateUIFromBoard()
-                    gameOver = gameController.checkGameState(board) != GameStatus.NOT_FINISHED
-                    turnPlayer1 = isMyTurn
+            onBoardUpdate = { updatedBoard, isMyTurnNow ->
+                board = updatedBoard
+                isMyTurn = isMyTurnNow
+
+                if (waitingDialog?.isShowing == true) {
+                    waitingDialog?.dismiss()
+                    waitingDialog = null
                 }
-            },
-            onGameEnd = { status ->
+
                 runOnUiThread {
-                    gameOver = true
+                    updateUIFromBoard()
+                }
+            }
+            ,
+            onGameEnd = { status ->
+                gameOver = true
+                runOnUiThread {
+                    updateUIFromBoard()
                     showResult(status)
                 }
             }
+
         )
-        board = gameController.newBoard()
-        updateUIFromBoard()
     }
 
     private fun startGame() {
@@ -101,10 +125,25 @@ class MainActivity : ComponentActivity() {
         if (gameOver) return
 
         if (isOnlineGame) {
-            if (!turnPlayer1) return
+            if (!isMyTurn || gameOver) return
+
             onlineManager?.makeMove(col)
+
+            // Esperar un momento para que el board se actualice (porque es asincrónico)
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!gameOver) {
+                    val status = gameController.checkGameState(board)
+                    if (status != GameStatus.NOT_FINISHED) {
+                        gameOver = true
+                        onlineManager?.sendGameEnd(status)
+                        showResult(status)
+                    }
+                }
+            }, 300)
+
             return
         }
+
 
         if (!makeMove(col, turnPlayer1)) return
 
@@ -192,8 +231,8 @@ class MainActivity : ComponentActivity() {
         }
         AlertDialog.Builder(this)
             .setTitle(message)
-            .setPositiveButton("Restart") { _, _ -> chooseModeAndStart() }
-            .setNegativeButton("Exit") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton("Menu") { _, _ -> chooseModeAndStart() }
+            .setNegativeButton("Close") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 }

@@ -1,134 +1,173 @@
 package com.example.cuatroenrayaOnline.game
 
+import android.app.AlertDialog
 import com.google.firebase.database.*
-import com.example.cuatroenrayaOnline.auth.AnonymousAuth
-import kotlin.random.Random
 
-class GameOnlineManager(private val gameId: String) {
-    private val databaseRef = FirebaseDatabase.getInstance().getReference("gameSessions").child(gameId)
-    private val gameController = GameController()
-    private var myPlayerKey: String = ""
+class GameOnlineManager(
+    private val userId: String
+) {
+    private val database = FirebaseDatabase.getInstance().reference
+    private var sessionRef: DatabaseReference? = null
+    private var sessionId: String = ""
+    private var isPlayer1 = false
+    private var isMyTurn = false
 
-    fun createNewGame() {
-        val uid = AnonymousAuth.getCurrentUserUid() ?: return
-        myPlayerKey = "player1"
-        val emptyBoard = List(6) { MutableList(7) { 0 } }
-
-        val game = GameState(
-            board = emptyBoard,
-            currentPlayer = "player1",
-            players = mapOf("player1" to Player(uid = uid)),
-            vocabularyQuestion = generateRandomQuestion(),
-            gameState = "waiting",
-            winner = ""
-        )
-
-        databaseRef.setValue(game)
-    }
-
-    fun joinGame() {
-        val uid = AnonymousAuth.getCurrentUserUid() ?: return
-        databaseRef.child("players").get().addOnSuccessListener {
-            val currentPlayers = it.value as? Map<*, *> ?: emptyMap<Any, Any>()
-            myPlayerKey = if ("player1" in currentPlayers) "player2" else "player1"
-            databaseRef.child("players").child(myPlayerKey).setValue(Player(uid = uid))
-            databaseRef.child("gameState").setValue("playing")
-        }
-    }
+    private var onBoardUpdate: ((Array<Array<Char>>, Boolean) -> Unit)? = null
+    private var onGameEnd: ((GameStatus) -> Unit)? = null
 
     fun connectToSession(
         onBoardUpdate: (Array<Array<Char>>, Boolean) -> Unit,
         onGameEnd: (GameStatus) -> Unit
     ) {
-        val uid = AnonymousAuth.getCurrentUserUid() ?: return
-
-        listenToGameState { state ->
-            val playerEntry = state.players.entries.find { it.value.uid == uid }
-            playerEntry?.let {
-                myPlayerKey = it.key
-                val isMyTurn = state.currentPlayer == myPlayerKey
-                val boardAsChar = convertBoardToChar(state.board)
-                val gameStatus = gameController.checkGameState(boardAsChar)
-
-                onBoardUpdate(boardAsChar, isMyTurn)
-
-                if (gameStatus != GameStatus.NOT_FINISHED) {
-                    onGameEnd(gameStatus)
-                }
-            }
-        }
+        this.onBoardUpdate = onBoardUpdate
+        this.onGameEnd = onGameEnd
+        joinGame()
     }
 
-    fun makeMove(column: Int) {
-        val uid = AnonymousAuth.getCurrentUserUid() ?: return
-        databaseRef.child("players").get().addOnSuccessListener {
-            val playersMap = it.value as? Map<*, *> ?: return@addOnSuccessListener
-            val currentKey = playersMap.entries.find { entry ->
-                (entry.value as? Map<*, *>)?.get("uid") == uid
-            }?.key as? String ?: return@addOnSuccessListener
+    private fun joinGame() {
+        database.child("sessions").orderByChild("gameState").equalTo("waiting")
+            .limitToFirst(10)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var joined = false
+                    for (session in snapshot.children) {
+                        val sessionKey = session.key ?: continue
+                        val player1Uid = session.child("players/player1/uid").getValue(String::class.java)
+                        val gameStateValue = session.child("gameState").getValue(String::class.java)
 
-            databaseRef.child("board").get().addOnSuccessListener { snapshot ->
-                val board = snapshot.getValue(object : GenericTypeIndicator<List<MutableList<Int>>>() {}) ?: return@addOnSuccessListener
+                        if (player1Uid != null && player1Uid != userId && gameStateValue == "waiting") {
+                            sessionId = sessionKey
+                            sessionRef = database.child("sessions").child(sessionId)
 
-                for (row in 5 downTo 0) {
-                    if (board[row][column] == 0) {
-                        board[row][column] = if (currentKey == "player1") 1 else 2
-                        databaseRef.child("board").setValue(board)
-                        databaseRef.child("currentPlayer").setValue(if (currentKey == "player1") "player2" else "player1")
-                        databaseRef.child("vocabularyQuestion").setValue(generateRandomQuestion())
-                        break
+                            sessionRef!!.child("players/player2").setValue(Player(userId))
+                            sessionRef!!.child("gameState").setValue("playing")
+
+                            isPlayer1 = false
+                            isMyTurn = false
+
+                            listenForUpdates()
+                            joined = true
+                            break
+                        }
+                    }
+
+                    if (!joined) {
+                        // Crear nueva sesión
+                        sessionId = database.child("sessions").push().key ?: "session-${System.currentTimeMillis()}"
+                        sessionRef = database.child("sessions").child(sessionId)
+
+                        val initialState = GameState(
+                            board = List(6) { List(7) { 0 } },
+                            currentPlayer = "player1",
+                            players = mapOf("player1" to Player(userId)),
+                            gameState = "waiting"
+                        )
+
+                        sessionRef!!.setValue(initialState)
+                        sessionRef!!.child("winner").removeValue()
+
+                        isPlayer1 = true
+                        isMyTurn = true
+
+                        listenForUpdates()
                     }
                 }
-            }
-        }
-    }
 
-    private fun convertBoardToChar(board: List<List<Int>>): Array<Array<Char>> {
-        return Array(6) { row ->
-            Array(7) { col ->
-                when (board[row][col]) {
-                    1 -> 'O'
-                    2 -> 'X'
-                    else -> '-'
+                override fun onCancelled(error: DatabaseError) {
+                    // Manejo opcional de errores
                 }
-            }
-        }
+            })
     }
 
-    fun listenToGameState(onUpdate: (GameState) -> Unit) {
-        databaseRef.addValueEventListener(object : ValueEventListener {
+    private fun listenForUpdates() {
+        sessionRef?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.getValue(GameState::class.java)?.let { onUpdate(it) }
+                val state = snapshot.getValue(GameState::class.java) ?: return
+
+                isMyTurn = (isPlayer1 && state.currentPlayer == "player1") ||
+                        (!isPlayer1 && state.currentPlayer == "player2")
+
+                val board = Array(6) { row ->
+                    Array(7) { col ->
+                        when (state.board[row][col]) {
+                            1 -> 'O'
+                            2 -> 'X'
+                            else -> '-'
+                        }
+                    }
+                }
+
+                onBoardUpdate?.invoke(board, isMyTurn)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
+        sessionRef?.child("winner")?.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val winnerStr = snapshot.getValue(String::class.java) ?: return
+                if (winnerStr.isBlank()) return
+
+                sessionRef?.child("gameState")?.get()?.addOnSuccessListener { stateSnapshot ->
+                    val gameState = stateSnapshot.getValue(String::class.java)
+                    if (gameState != "playing") return@addOnSuccessListener
+
+                    try {
+                        val result = GameStatus.valueOf(winnerStr)
+                        onGameEnd?.invoke(result)
+                    } catch (_: Exception) {}
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
     }
 
-    fun submitAnswer(answer: String, callback: (Boolean) -> Unit) {
-        databaseRef.child("vocabularyQuestion").get().addOnSuccessListener {
-            val correct = it.child("correctAnswer").value as String
-            if (answer.trim().lowercase() == correct.lowercase()) {
-                databaseRef.child("vocabularyQuestion/answeredCorrectly").setValue(true)
-                callback(true)
-            } else {
-                callback(false)
+    fun makeMove(col: Int) {
+        sessionRef?.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(currentData: MutableData): Transaction.Result {
+                val gameState = currentData.getValue(GameState::class.java)
+                    ?: return Transaction.success(currentData)
+
+                // ✅ Evita jugar si el juego terminó
+                if (gameState.gameState == "finished") {
+                    return Transaction.abort()
+                }
+
+                val board = gameState.board.map { it.toMutableList() }.toMutableList()
+                var moveMade = false
+
+                for (row in 5 downTo 0) {
+                    if (board[row][col] == 0) {
+                        board[row][col] = if (isPlayer1) 1 else 2
+                        moveMade = true
+                        break
+                    }
+                }
+
+                if (!moveMade) {
+                    return Transaction.abort()
+                }
+
+                val updatedState = gameState.copy(
+                    board = board,
+                    currentPlayer = if (gameState.currentPlayer == "player1") "player2" else "player1"
+                )
+
+                currentData.value = updatedState
+                return Transaction.success(currentData)
             }
-        }
+
+            override fun onComplete(error: DatabaseError?, committed: Boolean, currentData: DataSnapshot?) {
+                error?.toException()?.printStackTrace()
+            }
+        })
     }
 
-    fun restartGame() {
-        val emptyBoard = List(6) { MutableList(7) { 0 } }
-        databaseRef.child("board").setValue(emptyBoard)
-        databaseRef.child("currentPlayer").setValue("player1")
-        databaseRef.child("vocabularyQuestion").setValue(generateRandomQuestion())
-        databaseRef.child("gameState").setValue("playing")
-        databaseRef.child("winner").setValue("")
+    fun sendGameEnd(status: GameStatus) {
+        sessionRef?.child("winner")?.setValue(status.name)
+        sessionRef?.child("gameState")?.setValue("finished")
     }
 
-    private fun generateRandomQuestion(): VocabularyQuestion {
-        val words = listOf("cat" to "gato", "dog" to "perro", "apple" to "manzana")
-        val (word, answer) = words[Random.nextInt(words.size)]
-        return VocabularyQuestion(word = word, correctAnswer = answer)
-    }
+    fun isPlayerTurn(): Boolean = isMyTurn
 }

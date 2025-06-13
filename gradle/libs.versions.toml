@@ -10,9 +10,11 @@ activityCompose = "1.8.0"
 composeBom = "2024.09.00"
 firebaseAuthKtx = "23.2.1"
 firebaseDatabaseKtx = "21.0.0"
+appcompat = "1.6.1" # ADD THIS LINE - Use a recent stable version
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" } # ADD THIS LINE
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -33,4 +35,3 @@ firebase-database-ktx = { group = "com.google.firebase", name = "firebase-databa
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-

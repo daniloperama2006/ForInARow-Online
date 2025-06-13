@@ -16,3 +16,5 @@ data class VocabularyQuestion(
     val correctAnswer: String = "",
     val answeredCorrectly: Boolean = false
 )
+
+
