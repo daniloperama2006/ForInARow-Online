@@ -129,7 +129,6 @@ class GameOnlineManager(
                 val gameState = currentData.getValue(GameState::class.java)
                     ?: return Transaction.success(currentData)
 
-                // ✅ Evita jugar si el juego terminó
                 if (gameState.gameState == "finished") {
                     return Transaction.abort()
                 }
@@ -170,4 +169,13 @@ class GameOnlineManager(
     }
 
     fun isPlayerTurn(): Boolean = isMyTurn
+
+    fun skipTurn() {
+        sessionRef?.child("currentPlayer")?.setValue(
+            if (isPlayer1) "player2" else "player1"
+        )
+    }
+
+    
+
 }

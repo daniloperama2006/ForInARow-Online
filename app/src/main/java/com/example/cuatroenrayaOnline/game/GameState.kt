@@ -14,7 +14,7 @@ data class Player(val uid: String = "")
 data class VocabularyQuestion(
     val word: String = "",
     val correctAnswer: String = "",
-    val answeredCorrectly: Boolean = false
+    var answeredCorrectly: Boolean = false
 )
 
 

@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.example.cuatroenraya.R
 import com.example.cuatroenrayaOnline.game.*
@@ -17,13 +19,13 @@ import java.util.UUID
 class MainActivity : ComponentActivity() {
     private lateinit var board: Array<Array<Char>>
     private lateinit var boardViews: Array<Array<ImageView>>
+    private lateinit var vocabularyList: List<VocabularyQuestion>
     private var gameOver = false
     private val gameController = GameController()
     private var isVsCPU = true
     private var isOnlineGame = false
     private var turnPlayer1 = true
     private var isMyTurn = false
-
     private var onlineManager: GameOnlineManager? = null
     private var waitingDialog: AlertDialog? = null // NUEVO
 
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
         findViewById<Button>(R.id.restartGame).setOnClickListener {
             chooseModeAndStart()
         }
+        loadVocabularyFromAssets()
         chooseModeAndStart()
     }
 
@@ -127,24 +130,51 @@ class MainActivity : ComponentActivity() {
         if (isOnlineGame) {
             if (!isMyTurn || gameOver) return
 
-            onlineManager?.makeMove(col)
+            val question = getRandomUnansweredQuestion()
 
-            // Esperar un momento para que el board se actualice (porque es asincrónico)
-            Handler(Looper.getMainLooper()).postDelayed({
-                if (!gameOver) {
-                    val status = gameController.checkGameState(board)
-                    if (status != GameStatus.NOT_FINISHED) {
-                        gameOver = true
-                        onlineManager?.sendGameEnd(status)
-                        showResult(status)
+            if (question != null) {
+                val input = EditText(this).apply {
+                    hint = "Traducción de: ${question.word}"
+                    setPadding(30, 20, 30, 20)
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(30, 10, 30, 10)
                     }
                 }
-            }, 300)
+
+
+                AlertDialog.Builder(this)
+                    .setTitle("Vocabulary Question")
+                    .setMessage("What is the correct translation of \"${question.word}\"?")
+                    .setView(input)
+                    .setCancelable(false)
+                    .setPositiveButton("Submit") { dialog, _ ->
+                        val answer = input.text.toString().trim().lowercase()
+                        val correct = answer == question.correctAnswer.trim().lowercase()
+
+                        if (correct) {
+                            question.answeredCorrectly = true
+                            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show()
+                            performOnlineMove(col)
+                        } else {
+                            Toast.makeText(this, "Incorrect. Turn lost.", Toast.LENGTH_SHORT).show()
+                            onlineManager?.skipTurn()
+                        }
+
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            } else {
+                performOnlineMove(col)
+            }
 
             return
         }
 
-
+        // Local or CPU mode
         if (!makeMove(col, turnPlayer1)) return
 
         val state = gameController.checkGameState(board)
@@ -169,6 +199,7 @@ class MainActivity : ComponentActivity() {
             }, 500)
         }
     }
+
 
     private fun makeMove(col: Int, isPlayer1: Boolean): Boolean {
         for (row in 5 downTo 0) {
@@ -235,4 +266,33 @@ class MainActivity : ComponentActivity() {
             .setNegativeButton("Close") { dialog, _ -> dialog.dismiss() }
             .show()
     }
+
+    private fun loadVocabularyFromAssets() {
+        val jsonString = assets.open("vocabulary.json").bufferedReader().use { it.readText() }
+        val gson = com.google.gson.Gson()
+        val type = object : com.google.gson.reflect.TypeToken<List<VocabularyQuestion>>() {}.type
+        vocabularyList = gson.fromJson(jsonString, type)
+    }
+
+    private fun getRandomUnansweredQuestion(): VocabularyQuestion? {
+        return vocabularyList.shuffled().firstOrNull { !it.answeredCorrectly }
+    }
+
+    private fun performOnlineMove(col: Int) {
+        onlineManager?.makeMove(col)
+        isMyTurn = false
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (!gameOver) {
+                val status = gameController.checkGameState(board)
+                if (status != GameStatus.NOT_FINISHED) return@postDelayed
+                gameOver = true
+                onlineManager?.sendGameEnd(status)
+                showResult(status)
+            }
+        }, 300)
+    }
+
+
+
 }
