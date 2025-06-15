@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
     private var turnPlayer1 = true
     private var isMyTurn = false
     private var onlineManager: GameOnlineManager? = null
-    private var waitingDialog: AlertDialog? = null // NUEVO
+    private var waitingDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
 
         val auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: UUID.randomUUID().toString()
-        onlineManager = GameOnlineManager(userId)
+        onlineManager = GameOnlineManager(userId, this)
 
         // Mostrar diálogo de espera
         waitingDialog = AlertDialog.Builder(this)
@@ -91,18 +91,30 @@ class MainActivity : ComponentActivity() {
 
                 runOnUiThread {
                     updateUIFromBoard()
+                    // Verificar fin de juego:
+                    val state = gameController.checkGameState(board)
+                    if (state != GameStatus.NOT_FINISHED && !gameOver) {
+                        // Marcar localmente que ya terminó, para no re-enviar varias veces:
+                        gameOver = true
+                        // Enviar a Firebase el fin (para notificar al otro jugador):
+                        onlineManager?.sendGameEnd(state)
+                        // Mostrar el diálogo de resultado:
+                        showResult(state)
+                    }
                 }
-            }
-            ,
+            },
             onGameEnd = { status ->
-                gameOver = true
-                runOnUiThread {
-                    updateUIFromBoard()
-                    showResult(status)
+                // Firebase notifica que el otro jugador envió el resultado:
+                if (!gameOver) {
+                    gameOver = true
+                    runOnUiThread {
+                        updateUIFromBoard()
+                        showResult(status)
+                    }
                 }
             }
-
         )
+
     }
 
     private fun startGame() {
@@ -128,7 +140,10 @@ class MainActivity : ComponentActivity() {
         if (gameOver) return
 
         if (isOnlineGame) {
-            if (!isMyTurn || gameOver) return
+            if (!isMyTurn) {
+                Toast.makeText(this, "Espera tu turno...", Toast.LENGTH_SHORT).show()
+                return
+            }
 
             val question = getRandomUnansweredQuestion()
 
@@ -144,7 +159,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-
                 AlertDialog.Builder(this)
                     .setTitle("Vocabulary Question")
                     .setMessage("What is the correct translation of \"${question.word}\"?")
@@ -156,16 +170,17 @@ class MainActivity : ComponentActivity() {
 
                         if (correct) {
                             question.answeredCorrectly = true
-                            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Correcto, realizaste tu jugada", Toast.LENGTH_SHORT).show()
                             performOnlineMove(col)
                         } else {
-                            Toast.makeText(this, "Incorrect. Turn lost.", Toast.LENGTH_SHORT).show()
-                            onlineManager?.skipTurn()
+                            Toast.makeText(this, "Incorrecto. Pierdes el turno.", Toast.LENGTH_SHORT).show()
+                            onlineManager?.skipTurn()  // se cede el turno al otro jugador
+                            isMyTurn = false
                         }
 
                         dialog.dismiss()
                     }
-                    .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                    .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
                     .show()
             } else {
                 performOnlineMove(col)
@@ -174,7 +189,7 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        // Local or CPU mode
+        // --- JUEGO LOCAL / CPU ---
         if (!makeMove(col, turnPlayer1)) return
 
         val state = gameController.checkGameState(board)
@@ -199,6 +214,7 @@ class MainActivity : ComponentActivity() {
             }, 500)
         }
     }
+
 
 
     private fun makeMove(col: Int, isPlayer1: Boolean): Boolean {
@@ -280,18 +296,8 @@ class MainActivity : ComponentActivity() {
 
     private fun performOnlineMove(col: Int) {
         onlineManager?.makeMove(col)
-        isMyTurn = false
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (!gameOver) {
-                val status = gameController.checkGameState(board)
-                if (status != GameStatus.NOT_FINISHED) return@postDelayed
-                gameOver = true
-                onlineManager?.sendGameEnd(status)
-                showResult(status)
-            }
-        }, 300)
     }
+
 
 
 
