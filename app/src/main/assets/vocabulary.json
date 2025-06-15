@@ -1,434 +1,411 @@
 [
   {
-    "word": "Hola",
-    "correctAnswer": "Hello"
+    "word": "ser",
+    "answers": [
+      "to be",
+      "be"
+    ]
+  },
+  {
+    "word": "estar",
+    "answers": [
+      "to be",
+      "to be located",
+      "be located"
+    ]
+  },
+  {
+    "word": "tener",
+    "answers": [
+      "to have",
+      "have"
+    ]
   },
+  {
+    "word": "hacer",
+    "answers": [
+      "to do",
+      "to make",
+      "do",
+      "make"
+    ]
+  },
   {
-    "word": "Adiós",
-    "correctAnswer": "Goodbye"
+    "word": "ir",
+    "answers": [
+      "to go",
+      "go"
+    ]
   },
   {
-    "word": "Gracias",
-    "correctAnswer": "Thank you"
+    "word": "venir",
+    "answers": [
+      "to come",
+      "come"
+    ]
   },
   {
-    "word": "Por favor",
-    "correctAnswer": "Please"
+    "word": "ver",
+    "answers": [
+      "to see",
+      "see"
+    ]
   },
   {
-    "word": "¿Cómo estás?",
-    "correctAnswer": "How are you?"
+    "word": "dar",
+    "answers": [
+      "to give",
+      "give"
+    ]
   },
   {
-    "word": "Bien",
-    "correctAnswer": "Good"
+    "word": "saber",
+    "answers": [
+      "to know",
+      "know"
+    ]
   },
   {
-    "word": "Mal",
-    "correctAnswer": "Bad"
+    "word": "conocer",
+    "answers": [
+      "to know",
+      "to meet",
+      "know",
+      "meet"
+    ]
   },
   {
-    "word": "Sí",
-    "correctAnswer": "Yes"
+    "word": "querer",
+    "answers": [
+      "to want",
+      "want",
+      "to love",
+      "love"
+    ]
   },
   {
-    "word": "No",
-    "correctAnswer": "No"
+    "word": "poder",
+    "answers": [
+      "to be able",
+      "can",
+      "able"
+    ]
   },
   {
-    "word": "Agua",
-    "correctAnswer": "Water"
+    "word": "decir",
+    "answers": [
+      "to say",
+      "to tell",
+      "say",
+      "tell"
+    ]
   },
   {
-    "word": "Comida",
-    "correctAnswer": "Food"
+    "word": "hablar",
+    "answers": [
+      "to speak",
+      "to talk",
+      "speak",
+      "talk"
+    ]
   },
   {
-    "word": "Café",
-    "correctAnswer": "Coffee"
+    "word": "comer",
+    "answers": [
+      "to eat",
+      "eat"
+    ]
   },
   {
-    "word": "Té",
-    "correctAnswer": "Tea"
+    "word": "beber",
+    "answers": [
+      "to drink",
+      "drink"
+    ]
   },
   {
-    "word": "Leche",
-    "correctAnswer": "Milk"
+    "word": "vivir",
+    "answers": [
+      "to live",
+      "live"
+    ]
   },
   {
-    "word": "Pan",
-    "correctAnswer": "Bread"
+    "word": "morir",
+    "answers": [
+      "to die",
+      "die"
+    ]
   },
   {
-    "word": "Carne",
-    "correctAnswer": "Meat"
+    "word": "amar",
+    "answers": [
+      "to love",
+      "love"
+    ]
   },
   {
-    "word": "Pollo",
-    "correctAnswer": "Chicken"
+    "word": "odiar",
+    "answers": [
+      "to hate",
+      "hate"
+    ]
   },
   {
-    "word": "Pescado",
-    "correctAnswer": "Fish"
+    "word": "preguntar",
+    "answers": [
+      "to ask",
+      "ask"
+    ]
   },
   {
-    "word": "Arroz",
-    "correctAnswer": "Rice"
+    "word": "responder",
+    "answers": [
+      "to answer",
+      "to respond",
+      "answer",
+      "respond"
+    ]
   },
   {
-    "word": "Verdura",
-    "correctAnswer": "Vegetable"
+    "word": "escribir",
+    "answers": [
+      "to write",
+      "write"
+    ]
   },
   {
-    "word": "Fruta",
-    "correctAnswer": "Fruit"
+    "word": "leer",
+    "answers": [
+      "to read",
+      "read"
+    ]
   },
   {
-    "word": "Azúcar",
-    "correctAnswer": "Sugar"
+    "word": "dormir",
+    "answers": [
+      "to sleep",
+      "sleep"
+    ]
   },
   {
-    "word": "Sal",
-    "correctAnswer": "Salt"
+    "word": "despertar",
+    "answers": [
+      "to wake up",
+      "wake up"
+    ]
   },
   {
-    "word": "Grande",
-    "correctAnswer": "Big"
+    "word": "correr",
+    "answers": [
+      "to run",
+      "run"
+    ]
   },
   {
-    "word": "Pequeño",
-    "correctAnswer": "Small"
+    "word": "caminar",
+    "answers": [
+      "to walk",
+      "walk"
+    ]
   },
   {
-    "word": "Caliente",
-    "correctAnswer": "Hot"
+    "word": "saltar",
+    "answers": [
+      "to jump",
+      "jump"
+    ]
   },
   {
-    "word": "Frío",
-    "correctAnswer": "Cold"
+    "word": "sentar",
+    "answers": [
+      "to sit",
+      "sit"
+    ]
   },
   {
-    "word": "Nuevo",
-    "correctAnswer": "New"
+    "word": "levantar",
+    "answers": [
+      "to stand up",
+      "stand up"
+    ]
   },
   {
-    "word": "Viejo",
-    "correctAnswer": "Old"
+    "word": "reír",
+    "answers": [
+      "to laugh",
+      "laugh"
+    ]
   },
   {
-    "word": "Rápido",
-    "correctAnswer": "Fast"
+    "word": "llorar",
+    "answers": [
+      "to cry",
+      "cry"
+    ]
   },
   {
-    "word": "Lento",
-    "correctAnswer": "Slow"
+    "word": "jugar",
+    "answers": [
+      "to play",
+      "play"
+    ]
   },
   {
-    "word": "Feliz",
-    "correctAnswer": "Happy"
+    "word": "trabajar",
+    "answers": [
+      "to work",
+      "work"
+    ]
   },
   {
-    "word": "Triste",
-    "correctAnswer": "Sad"
+    "word": "estudiar",
+    "answers": [
+      "to study",
+      "study"
+    ]
   },
   {
-    "word": "Día",
-    "correctAnswer": "Day"
+    "word": "enseñar",
+    "answers": [
+      "to teach",
+      "to show",
+      "teach",
+      "show"
+    ]
   },
   {
-    "word": "Noche",
-    "correctAnswer": "Night"
+    "word": "aprender",
+    "answers": [
+      "to learn",
+      "learn"
+    ]
   },
   {
-    "word": "Mañana",
-    "correctAnswer": "Morning"
+    "word": "comprar",
+    "answers": [
+      "to buy",
+      "buy"
+    ]
   },
   {
-    "word": "Tarde",
-    "correctAnswer": "Afternoon"
+    "word": "vender",
+    "answers": [
+      "to sell",
+      "sell"
+    ]
   },
   {
-    "word": "Semana",
-    "correctAnswer": "Week"
+    "word": "pagar",
+    "answers": [
+      "to pay",
+      "pay"
+    ]
   },
   {
-    "word": "Mes",
-    "correctAnswer": "Month"
+    "word": "recibir",
+    "answers": [
+      "to receive",
+      "receive"
+    ]
   },
   {
-    "word": "Año",
-    "correctAnswer": "Year"
+    "word": "abrir",
+    "answers": [
+      "to open",
+      "open"
+    ]
   },
   {
-    "word": "Hoy",
-    "correctAnswer": "Today"
+    "word": "cerrar",
+    "answers": [
+      "to close",
+      "close"
+    ]
   },
   {
-    "word": "Ayer",
-    "correctAnswer": "Yesterday"
+    "word": "empezar",
+    "answers": [
+      "to start",
+      "to begin",
+      "start",
+      "begin"
+    ]
   },
   {
-    "word": "Mañana (día siguiente)",
-    "correctAnswer": "Tomorrow"
+    "word": "terminar",
+    "answers": [
+      "to finish",
+      "to end",
+      "finish",
+      "end"
+    ]
   },
   {
-    "word": "Uno",
-    "correctAnswer": "One"
+    "word": "ganar",
+    "answers": [
+      "to win",
+      "to earn",
+      "win",
+      "earn"
+    ]
   },
   {
-    "word": "Dos",
-    "correctAnswer": "Two"
+    "word": "perder",
+    "answers": [
+      "to lose",
+      "lose"
+    ]
   },
   {
-    "word": "Tres",
-    "correctAnswer": "Three"
+    "word": "ayudar",
+    "answers": [
+      "to help",
+      "help"
+    ]
   },
   {
-    "word": "Cuatro",
-    "correctAnswer": "Four"
+    "word": "mostrar",
+    "answers": [
+      "to show",
+      "show"
+    ]
   },
   {
-    "word": "Cinco",
-    "correctAnswer": "Five"
+    "word": "encontrar",
+    "answers": [
+      "to find",
+      "find"
+    ]
   },
   {
-    "word": "Seis",
-    "correctAnswer": "Six"
+    "word": "pensar",
+    "answers": [
+      "to think",
+      "think"
+    ]
   },
   {
-    "word": "Siete",
-    "correctAnswer": "Seven"
+    "word": "creer",
+    "answers": [
+      "to believe",
+      "believe"
+    ]
   },
   {
-    "word": "Ocho",
-    "correctAnswer": "Eight"
+    "word": "sentir",
+    "answers": [
+      "to feel",
+      "feel"
+    ]
   },
   {
-    "word": "Nueve",
-    "correctAnswer": "Nine"
-  },
-  {
-    "word": "Diez",
-    "correctAnswer": "Ten"
-  },
-  {
-    "word": "Rojo",
-    "correctAnswer": "Red"
-  },
-  {
-    "word": "Azul",
-    "correctAnswer": "Blue"
-  },
-  {
-    "word": "Verde",
-    "correctAnswer": "Green"
-  },
-  {
-    "word": "Amarillo",
-    "correctAnswer": "Yellow"
-  },
-  {
-    "word": "Blanco",
-    "correctAnswer": "White"
-  },
-  {
-    "word": "Negro",
-    "correctAnswer": "Black"
-  },
-  {
-    "word": "Hombre",
-    "correctAnswer": "Man"
-  },
-  {
-    "word": "Mujer",
-    "correctAnswer": "Woman"
-  },
-  {
-    "word": "Niño",
-    "correctAnswer": "Boy"
-  },
-  {
-    "word": "Niña",
-    "correctAnswer": "Girl"
-  },
-  {
-    "word": "Familia",
-    "correctAnswer": "Family"
-  },
-  {
-    "word": "Amigo",
-    "correctAnswer": "Friend"
-  },
-  {
-    "word": "Trabajo",
-    "correctAnswer": "Work"
-  },
-  {
-    "word": "Escuela",
-    "correctAnswer": "School"
-  },
-  {
-    "word": "Libro",
-    "correctAnswer": "Book"
-  },
-  {
-    "word": "Música",
-    "correctAnswer": "Music"
-  },
-  {
-    "word": "Película",
-    "correctAnswer": "Movie"
-  },
-  {
-    "word": "Deporte",
-    "correctAnswer": "Sport"
-  },
-  {
-    "word": "Dinero",
-    "correctAnswer": "Money"
-  },
-  {
-    "word": "Tiempo",
-    "correctAnswer": "Time"
-  },
-  {
-    "word": "Mundo",
-    "correctAnswer": "World"
-  },
-  {
-    "word": "Ciudad",
-    "correctAnswer": "City"
-  },
-  {
-    "word": "País",
-    "correctAnswer": "Country"
-  },
-  {
-    "word": "Idioma",
-    "correctAnswer": "Language"
-  },
-  {
-    "word": "Ayuda",
-    "correctAnswer": "Help"
-  },
-  {
-    "word": "Pregunta",
-    "correctAnswer": "Question"
-  },
-  {
-    "word": "Respuesta",
-    "correctAnswer": "Answer"
-  },
-  {
-    "word": "Entender",
-    "correctAnswer": "To understand"
-  },
-  {
-    "word": "Hablar",
-    "correctAnswer": "To speak"
-  },
-  {
-    "word": "Ver",
-    "correctAnswer": "To see"
-  },
-  {
-    "word": "Escuchar",
-    "correctAnswer": "To listen"
-  },
-  {
-    "word": "Comer",
-    "correctAnswer": "To eat"
-  },
-  {
-    "word": "Beber",
-    "correctAnswer": "To drink"
-  },
-  {
-    "word": "Ir",
-    "correctAnswer": "To go"
-  },
-  {
-    "word": "Venir",
-    "correctAnswer": "To come"
-  },
-  {
-    "word": "Hacer",
-    "correctAnswer": "To do/make"
-  },
-  {
-    "word": "Tener",
-    "correctAnswer": "To have"
-  },
-  {
-    "word": "Ser",
-    "correctAnswer": "To be (permanent)"
-  },
-  {
-    "word": "Estar",
-    "correctAnswer": "To be (temporary)"
-  },
-  {
-    "word": "Querer",
-    "correctAnswer": "To want"
-  },
-  {
-    "word": "Saber",
-    "correctAnswer": "To know (facts)"
-  },
-  {
-    "word": "Conocer",
-    "correctAnswer": "To know (people/places)"
-  },
-  {
-    "word": "Poder",
-    "correctAnswer": "To be able to/can"
-  },
-  {
-    "word": "Deber",
-    "correctAnswer": "To must/should"
-  },
-  {
-    "word": "Gusta",
-    "correctAnswer": "To like"
-  },
-  {
-    "word": "Ahora",
-    "correctAnswer": "Now"
-  },
-  {
-    "word": "Siempre",
-    "correctAnswer": "Always"
-  },
-  {
-    "word": "Nunca",
-    "correctAnswer": "Never"
-  },
-  {
-    "word": "A veces",
-    "correctAnswer": "Sometimes"
-  },
-  {
-    "word": "Mucho",
-    "correctAnswer": "A lot/much"
-  },
-  {
-    "word": "Poco",
-    "correctAnswer": "Little"
-  },
-  {
-    "word": "Más",
-    "correctAnswer": "More"
-  },
-  {
-    "word": "Menos",
-    "correctAnswer": "Less"
-  },
-  {
-    "word": "Aquí",
-    "correctAnswer": "Here"
-  },
-  {
-    "word": "Allí",
-    "correctAnswer": "There"
+    "word": "mirar",
+    "answers": [
+      "to look",
+      "to watch",
+      "look",
+      "watch"
+    ]
   }
 ]

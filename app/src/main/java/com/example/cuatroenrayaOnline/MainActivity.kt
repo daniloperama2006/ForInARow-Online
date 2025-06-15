@@ -1,6 +1,5 @@
 package com.example.cuatroenrayaOnline
 
-import android.R.id.message
 import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Handler
@@ -12,9 +11,19 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.example.cuatroenraya.R
-import com.example.cuatroenrayaOnline.game.*
+import com.example.cuatroenrayaOnline.game.GameOnlineManager
+import com.example.cuatroenrayaOnline.game.GameStatus
+import com.example.cuatroenrayaOnline.game.GameController
 import com.google.firebase.auth.FirebaseAuth
+import java.text.Normalizer
 import java.util.UUID
+
+// Data class para vocabulario: cada palabra con su lista de respuestas aceptables.
+data class VocabularyQuestion(
+    val word: String,
+    val answers: List<String>,
+    var answeredCorrectly: Boolean = false
+)
 
 class MainActivity : ComponentActivity() {
     private lateinit var board: Array<Array<Char>>
@@ -35,6 +44,11 @@ class MainActivity : ComponentActivity() {
 
         initBoardViews()
         findViewById<Button>(R.id.restartGame).setOnClickListener {
+            // Si estamos en partida online en curso, notificar desconexión antes de reiniciar
+            if (isOnlineGame && !gameOver) {
+                onlineManager?.notifyOpponentLeft()
+                onlineManager?.leaveSession()
+            }
             chooseModeAndStart()
         }
         loadVocabularyFromAssets()
@@ -45,16 +59,28 @@ class MainActivity : ComponentActivity() {
         AlertDialog.Builder(this)
             .setTitle("Select game mode")
             .setPositiveButton("Player vs CPU") { _, _ ->
+                if (isOnlineGame && !gameOver) {
+                    onlineManager?.notifyOpponentLeft()
+                    onlineManager?.leaveSession()
+                }
                 isVsCPU = true
                 isOnlineGame = false
                 startGame()
             }
             .setNegativeButton("Player vs Player") { _, _ ->
+                if (isOnlineGame && !gameOver) {
+                    onlineManager?.notifyOpponentLeft()
+                    onlineManager?.leaveSession()
+                }
                 isVsCPU = false
                 isOnlineGame = false
                 startGame()
             }
             .setNeutralButton("Player vs Online") { _, _ ->
+                if (isOnlineGame && !gameOver) {
+                    onlineManager?.notifyOpponentLeft()
+                    onlineManager?.leaveSession()
+                }
                 isOnlineGame = true
                 isVsCPU = false
                 setupOnlineGame()
@@ -71,10 +97,10 @@ class MainActivity : ComponentActivity() {
         val userId = auth.currentUser?.uid ?: UUID.randomUUID().toString()
         onlineManager = GameOnlineManager(userId, this)
 
-        // Mostrar diálogo de espera
+        // Mostrar diálogo de espera en inglés
         waitingDialog = AlertDialog.Builder(this)
             .setTitle("Waiting for a player...")
-            .setMessage("Please wait while anybody joins the game.")
+            .setMessage("Please wait while someone joins the game.")
             .setCancelable(false)
             .create()
         waitingDialog?.show()
@@ -91,30 +117,26 @@ class MainActivity : ComponentActivity() {
 
                 runOnUiThread {
                     updateUIFromBoard()
-                    // Verificar fin de juego:
+                    // Verificar fin de juego
                     val state = gameController.checkGameState(board)
                     if (state != GameStatus.NOT_FINISHED && !gameOver) {
-                        // Marcar localmente que ya terminó, para no re-enviar varias veces:
                         gameOver = true
-                        // Enviar a Firebase el fin (para notificar al otro jugador):
                         onlineManager?.sendGameEnd(state)
-                        // Mostrar el diálogo de resultado:
                         showResult(state)
                     }
                 }
             },
             onGameEnd = { status ->
-                // Firebase notifica que el otro jugador envió el resultado:
                 if (!gameOver) {
                     gameOver = true
                     runOnUiThread {
                         updateUIFromBoard()
+                        Toast.makeText(this, "Game ended: $status", Toast.LENGTH_SHORT).show()
                         showResult(status)
                     }
                 }
             }
         )
-
     }
 
     private fun startGame() {
@@ -141,7 +163,7 @@ class MainActivity : ComponentActivity() {
 
         if (isOnlineGame) {
             if (!isMyTurn) {
-                Toast.makeText(this, "Espera tu turno...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Wait for your turn...", Toast.LENGTH_SHORT).show()
                 return
             }
 
@@ -149,7 +171,7 @@ class MainActivity : ComponentActivity() {
 
             if (question != null) {
                 val input = EditText(this).apply {
-                    hint = "Traducción de: ${question.word}"
+                    hint = "Translate: ${question.word}"
                     setPadding(30, 20, 30, 20)
                     layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -165,27 +187,30 @@ class MainActivity : ComponentActivity() {
                     .setView(input)
                     .setCancelable(false)
                     .setPositiveButton("Submit") { dialog, _ ->
-                        val answer = input.text.toString().trim().lowercase()
-                        val correct = answer == question.correctAnswer.trim().lowercase()
+                        val answerRaw = input.text.toString()
+                        val answerNorm = normalizeText(answerRaw)
+                        val acceptableNorms = question.answers.map { normalizeText(it) }
+                        val correct = acceptableNorms.any { it == answerNorm }
 
                         if (correct) {
                             question.answeredCorrectly = true
-                            Toast.makeText(this, "Correcto, realizaste tu jugada", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Correct! You make the move.", Toast.LENGTH_SHORT).show()
                             performOnlineMove(col)
                         } else {
-                            Toast.makeText(this, "Incorrecto. Pierdes el turno.", Toast.LENGTH_SHORT).show()
-                            onlineManager?.skipTurn()  // se cede el turno al otro jugador
+                            Toast.makeText(this, "Incorrect. You lose your turn.", Toast.LENGTH_SHORT).show()
+                            onlineManager?.skipTurn()
                             isMyTurn = false
                         }
-
                         dialog.dismiss()
                     }
-                    .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
+                    .setNegativeButton("Cancel") { dialog, _ ->
+                        dialog.dismiss()
+                    }
                     .show()
             } else {
+                // No quedan preguntas pendientes
                 performOnlineMove(col)
             }
-
             return
         }
 
@@ -214,8 +239,6 @@ class MainActivity : ComponentActivity() {
             }, 500)
         }
     }
-
-
 
     private fun makeMove(col: Int, isPlayer1: Boolean): Boolean {
         for (row in 5 downTo 0) {
@@ -278,8 +301,16 @@ class MainActivity : ComponentActivity() {
         }
         AlertDialog.Builder(this)
             .setTitle(message)
-            .setPositiveButton("Menu") { _, _ -> chooseModeAndStart() }
-            .setNegativeButton("Close") { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton("Menu") { _, _ ->
+                if (isOnlineGame && !gameOver) {
+                    onlineManager?.notifyOpponentLeft()
+                    onlineManager?.leaveSession()
+                }
+                chooseModeAndStart()
+            }
+            .setNegativeButton("Close") { dialog, _ ->
+                dialog.dismiss()
+            }
             .show()
     }
 
@@ -298,7 +329,19 @@ class MainActivity : ComponentActivity() {
         onlineManager?.makeMove(col)
     }
 
+    //Normaliza texto: elimina tildes/diacríticos, trim y pasa a minúsculas.
+    private fun normalizeText(s: String): String {
+        val tmp = Normalizer.normalize(s, Normalizer.Form.NFD)
+        val noDiacritics = Regex("\\p{InCombiningDiacriticalMarks}+").replace(tmp, "")
+        return noDiacritics.trim().lowercase()
+    }
 
-
-
+    override fun onDestroy() {
+        // Si se destruye Activity en medio de partida online activa, notificamos desconexión
+        if (isOnlineGame && !gameOver) {
+            onlineManager?.notifyOpponentLeft()
+            onlineManager?.leaveSession()
+        }
+        super.onDestroy()
+    }
 }
