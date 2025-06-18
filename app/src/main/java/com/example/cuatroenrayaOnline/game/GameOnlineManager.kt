@@ -6,6 +6,7 @@ import android.os.Looper
 import android.widget.Toast
 import com.google.firebase.database.*
 
+// Manages online multiplayer logic using Firebase Realtime Database
 class GameOnlineManager(
     private val userId: String,
     private val context: Context
@@ -22,9 +23,14 @@ class GameOnlineManager(
     private var prevPlayersCount = 0
     private var gameStateString: String = ""  // "waiting", "playing", "finished", etc.
 
-    /**
-     * Conecta a la sesión online, establece callbacks.
-     */
+    private var onMatchFoundListener: (() -> Unit)? = null
+
+    // Allows setting a listener for when a match is found
+    fun setOnMatchFoundListener(listener: () -> Unit) {
+        this.onMatchFoundListener = listener
+    }
+
+    // Connects to a game session and sets listeners
     fun connectToSession(
         onBoardUpdate: (Array<Array<Char>>, Boolean) -> Unit,
         onGameEnd: (GameStatus) -> Unit
@@ -34,8 +40,8 @@ class GameOnlineManager(
         joinGame()
     }
 
+    // Finds a waiting session or creates a new one
     private fun joinGame() {
-        // Busca sesiones en estado "waiting"
         database.child("sessions")
             .orderByChild("gameState").equalTo("waiting")
             .limitToFirst(10)
@@ -46,12 +52,11 @@ class GameOnlineManager(
                         val sessionKey = session.key ?: continue
                         val player1Uid = session.child("players/player1/uid").getValue(String::class.java)
                         val gameStateValue = session.child("gameState").getValue(String::class.java)
-                        // Si hay player1 distinto y estado "waiting", únase como player2
+
                         if (player1Uid != null && player1Uid != userId && gameStateValue == "waiting") {
+                            // Join as player2
                             sessionId = sessionKey
                             sessionRef = database.child("sessions").child(sessionId)
-
-                            // Añadir player2 y cambiar estado a "playing"
                             sessionRef!!.child("players").child("player2").setValue(Player(userId))
                             sessionRef!!.child("gameState").setValue("playing")
 
@@ -60,13 +65,14 @@ class GameOnlineManager(
                             gameStateString = "playing"
 
                             listenForUpdates()
+                            onMatchFoundListener?.invoke()
                             joined = true
                             break
                         }
                     }
 
                     if (!joined) {
-                        // Crear nueva sesión como player1
+                        // Create a new session as player1
                         sessionId = database.child("sessions").push().key ?: "session-${System.currentTimeMillis()}"
                         sessionRef = database.child("sessions").child(sessionId)
 
@@ -86,6 +92,7 @@ class GameOnlineManager(
                         gameStateString = "waiting"
 
                         listenForUpdates()
+                        onMatchFoundListener?.invoke()
                     }
                 }
 
@@ -97,11 +104,8 @@ class GameOnlineManager(
             })
     }
 
-    /**
-     * Escucha cambios en la sesión: tablero, turno, jugadores y fin de juego.
-     */
+    // Listens for session updates and game state changes
     private fun listenForUpdates() {
-        // Listener principal de GameState completo
         sessionRef?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val state = snapshot.getValue(GameState::class.java) ?: return
@@ -110,29 +114,25 @@ class GameOnlineManager(
                 val newGameStateString = state.gameState ?: ""
                 gameStateString = newGameStateString
 
-                // Detectar cambios en número de jugadores
+                // Check if opponent joined or left
                 val playersMap = state.players
                 val currentPlayersCount = playersMap.size
                 if (isPlayer1) {
                     if (prevPlayersCount < 2 && currentPlayersCount == 2) {
-                        // Oponente se unió
                         Handler(Looper.getMainLooper()).post {
                             Toast.makeText(context, "Opponent connected. Game starts!", Toast.LENGTH_SHORT).show()
                         }
                     }
                     if (prevPlayersCount == 2 && currentPlayersCount < 2) {
-                        // Oponente se desconectó
                         Handler(Looper.getMainLooper()).post {
                             Toast.makeText(context, "Opponent disconnected. You win!", Toast.LENGTH_SHORT).show()
                         }
-                        // Notificar fin si estábamos en playing y no terminado
                         if (prevGameStateString == "playing" && gameStateString != "finished") {
                             onGameEnd?.invoke(GameStatus.PLAYER1_WIN)
                         }
                     }
                 } else {
                     if (prevPlayersCount == 2 && currentPlayersCount < 2) {
-                        // Oponente (player1) se desconectó
                         Handler(Looper.getMainLooper()).post {
                             Toast.makeText(context, "Opponent disconnected. You win!", Toast.LENGTH_SHORT).show()
                         }
@@ -143,12 +143,12 @@ class GameOnlineManager(
                 }
                 prevPlayersCount = currentPlayersCount
 
-                // Actualizar turno
+                // Update turn info
                 val wasMyTurn = isMyTurn
                 isMyTurn = (isPlayer1 && state.currentPlayer == "player1")
                         || (!isPlayer1 && state.currentPlayer == "player2")
 
-                // Convertir tablero y llamar callback
+                // Convert board values (1/2/0) to characters (O/X/-)
                 val boardArr = Array(6) { row ->
                     Array(7) { col ->
                         when (state.board[row][col]) {
@@ -160,6 +160,7 @@ class GameOnlineManager(
                 }
                 onBoardUpdate?.invoke(boardArr, isMyTurn)
 
+                // Notify turn change
                 if (!wasMyTurn && isMyTurn) {
                     Handler(Looper.getMainLooper()).post {
                         Toast.makeText(context, "Your turn!", Toast.LENGTH_SHORT).show()
@@ -174,7 +175,7 @@ class GameOnlineManager(
             }
         })
 
-        // Listener para "winner"
+        // Listen for winner
         sessionRef?.child("winner")?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val winnerStr = snapshot.getValue(String::class.java) ?: return
@@ -189,9 +190,7 @@ class GameOnlineManager(
                                 Toast.makeText(context, "Game ended: $winnerStr", Toast.LENGTH_SHORT).show()
                             }
                             onGameEnd?.invoke(result)
-                        } catch (_: Exception) {
-                            // Valor inesperado
-                        }
+                        } catch (_: Exception) {}
                     }
                 }
             }
@@ -204,9 +203,7 @@ class GameOnlineManager(
         })
     }
 
-    /**
-     * Realiza movimiento en Firebase.
-     */
+    // Makes a move in the selected column
     fun makeMove(col: Int) {
         if (!isMyTurn) {
             Handler(Looper.getMainLooper()).post {
@@ -214,13 +211,13 @@ class GameOnlineManager(
             }
             return
         }
+
         sessionRef?.runTransaction(object : Transaction.Handler {
             override fun doTransaction(currentData: MutableData): Transaction.Result {
                 val gameState = currentData.getValue(GameState::class.java)
                     ?: return Transaction.success(currentData)
-                if (gameState.gameState == "finished") {
-                    return Transaction.abort()
-                }
+                if (gameState.gameState == "finished") return Transaction.abort()
+
                 val board = gameState.board.map { it.toMutableList() }.toMutableList()
                 var moveMade = false
                 for (row in 5 downTo 0) {
@@ -230,9 +227,8 @@ class GameOnlineManager(
                         break
                     }
                 }
-                if (!moveMade) {
-                    return Transaction.abort()
-                }
+                if (!moveMade) return Transaction.abort()
+
                 val nextPlayer = if (gameState.currentPlayer == "player1") "player2" else "player1"
                 val updatedState = gameState.copy(
                     board = board,
@@ -252,32 +248,23 @@ class GameOnlineManager(
         })
     }
 
-    /**
-     * Envía fin de juego.
-     */
+    // Ends the game and sets the winner
     fun sendGameEnd(status: GameStatus) {
         sessionRef?.child("winner")?.setValue(status.name)
         sessionRef?.child("gameState")?.setValue("finished")
     }
 
-    /**
-     * Devuelve si es turno del jugador.
-     */
+    // Returns true if it's this player's turn
     fun isPlayerTurn(): Boolean = isMyTurn
 
-    /**
-     * Cede turno al oponente.
-     */
+    // Skips the turn and changes current player
     fun skipTurn() {
         sessionRef?.child("currentPlayer")?.setValue(
             if (isPlayer1) "player2" else "player1"
         )
     }
 
-    /**
-     * Notifica al oponente que tú te desconectaste/abandonaste: marca gameState=finished y winner=opponent.
-     * Luego debería llamarse leaveSession() para limpiar.
-     */
+    // Notifies that opponent left the game
     fun notifyOpponentLeft() {
         if (gameStateString == "finished") return
         val opponentWinStatus = if (isPlayer1) GameStatus.PLAYER2_WIN else GameStatus.PLAYER1_WIN
@@ -288,11 +275,14 @@ class GameOnlineManager(
         }
     }
 
-    /**
-     * Sale de la sesión, elimina tu nodo de players y opcionalmente borra toda la sesión.
-     */
+    // Leaves the session and removes player from database
     fun leaveSession() {
         sessionRef?.child("players")?.child(if (isPlayer1) "player1" else "player2")?.removeValue()
         sessionRef?.removeValue()
+    }
+
+    // Returns the session ID
+    fun getSessionId(): String {
+        return sessionId
     }
 }

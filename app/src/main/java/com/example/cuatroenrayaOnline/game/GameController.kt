@@ -1,4 +1,3 @@
-// GameController.kt
 package com.example.cuatroenrayaOnline.game
 
 class GameController {
@@ -19,27 +18,27 @@ class GameController {
             return true
         }
 
-        // Draw: no empty cells left on the board
-        if (board.all { row -> row.none { it == '-' } }) return GameStatus.DRAW
+        var isBoardFull = true
 
-        // Iterate through each non-empty cell and check for possible 4 in a line
+        // Check all cells for winning lines and track if board is full
         for (i in 0 until rows) {
             for (j in 0 until cols) {
                 val cell = board[i][j]
-                if (cell == '-') continue // Skip empty cells
-                // Check in all four directions: horizontal, vertical, and both diagonals
+                if (cell == '-') {
+                    isBoardFull = false
+                    continue
+                }
                 if (
                     checkDirection(i, j, 0, 1, cell) ||  // Horizontal
                     checkDirection(i, j, 1, 0, cell) ||  // Vertical
-                    checkDirection(i, j, 1, 1, cell) ||  // Diagonal up-right
-                    checkDirection(i, j, 1, -1, cell)    // Diagonal up-left
+                    checkDirection(i, j, 1, 1, cell) ||  // Diagonal down-right
+                    checkDirection(i, j, 1, -1, cell)    // Diagonal down-left
                 ) {
                     return if (cell == 'O') GameStatus.PLAYER1_WIN else GameStatus.PLAYER2_WIN
                 }
             }
         }
 
-        // If no winner and not a draw, the game is not finished
-        return GameStatus.NOT_FINISHED
+        return if (isBoardFull) GameStatus.DRAW else GameStatus.NOT_FINISHED
     }
 }
